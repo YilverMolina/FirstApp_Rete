@@ -10,10 +10,6 @@ export class AddComponent extends Component {
   builder(node) {
     const inp1 = new Input('num1', 'Number', numSocket);
     const inp2 = new Input('num2', 'Number', numSocket);
-    const inp3 = new Input('num3', 'Number', numSocket);
-    const inp4 = new Input('num4', 'Number', numSocket);
-    const inp5 = new Input('num5', 'Number', numSocket);
-    const inp6 = new Input('num6', 'Number', numSocket);
     const out = new Output('num', 'Number', numSocket);
 
     inp1.addControl(new NumControl(this.editor, 'num1'));
@@ -21,10 +17,6 @@ export class AddComponent extends Component {
 
     node.addInput(inp1)
       .addInput(inp2)
-      .addInput(inp3)
-      .addInput(inp4)
-      .addInput(inp5)
-      .addInput(inp6)
       .addControl(new NumControl(this.editor, 'preview', true))
       .addOutput(out);
   }

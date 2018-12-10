@@ -10,6 +10,8 @@ import * as VueRenderPlugin from 'rete-vue-render-plugin';
 import { NumComponent } from './components/number-component';
 import { AddComponent } from './components/add-component';
 
+const components = [new NumComponent(), new AddComponent()];
+
 @Component({
   selector: 'app-rete',
   templateUrl: './rete.component.html',
@@ -27,16 +29,14 @@ export class ReteComponent implements AfterViewInit {
 
     const container = this.el.nativeElement;
 
-    const components = [new NumComponent(), new AddComponent()];
-
-    const editor = new NodeEditor('demo@0.2.0', container);
-    editor.use(ConnectionPlugin);
-    editor.use(VueRenderPlugin);
+    this.editor = new NodeEditor('demo@0.2.0', container);
+    this.editor.use(ConnectionPlugin);
+    this.editor.use(VueRenderPlugin);
 
     const engine = new Engine('demo@0.2.0');
 
     components.map(c => {
-      editor.register(c);
+      this.editor.register(c);
       engine.register(c);
     });
 
@@ -48,21 +48,27 @@ export class ReteComponent implements AfterViewInit {
     n2.position = [80, 400];
     add.position = [500, 240];
 
-    editor.addNode(n1);
-    editor.addNode(n2);
-    editor.addNode(add);
+    this.editor.addNode(n1);
+    this.editor.addNode(n2);
+    this.editor.addNode(add);
 
-    editor.connect(n1.outputs.get('num'), add.inputs.get('num1'));
-    editor.connect(n2.outputs.get('num'), add.inputs.get('num2'));
+    this.editor.connect(n1.outputs.get('num'), add.inputs.get('num1'));
+    this.editor.connect(n2.outputs.get('num'), add.inputs.get('num2'));
 
 
-    editor.on('process nodecreated noderemoved connectioncreated connectionremoved', async () => {
+    this.editor.on('process nodecreated noderemoved connectioncreated connectionremoved', async () => {
       await engine.abort();
-      await engine.process(editor.toJSON());
+      await engine.process(this.editor.toJSON());
     });
 
-    editor.view.resize();
-    editor.trigger('process');
+    this.editor.view.resize();
+    this.editor.trigger('process');
+  }
+
+  async addNode(event: any) {
+    const n1 = await components[0].createNode({ num: 2 });
+    n1.position = [85, 207];
+    this.editor.addNode(n1);
   }
 }
 
